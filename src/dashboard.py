@@ -1,8 +1,8 @@
-from processing import initialize_dataframe
-import streamlit as st
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
+import streamlit as st
+
+from processing import initialize_dataframe
 
 
 @st.cache
@@ -16,7 +16,10 @@ def plot_pie(column_name, dataframe):
 
     data = dataframe.groupby(column_name).count().iloc[:, 0]
     data_Attrited = (
-        dataframe[dataframe["Attrition_Flag"] == "Attrited Customer"].groupby(column_name).count().iloc[:, 0]
+        dataframe[dataframe["Attrition_Flag"] == "Attrited Customer"]
+        .groupby(column_name)
+        .count()
+        .iloc[:, 0]
     )
     data.name = column_name
     labels = data.index
