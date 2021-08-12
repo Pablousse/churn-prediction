@@ -1,7 +1,6 @@
 import streamlit as st
 from sklearn import datasets
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 
 

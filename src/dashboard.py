@@ -1,13 +1,8 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import streamlit as st
-
-from processing import initialize_dataframe
-
-
-@st.cache
-def load_data():
-    return initialize_dataframe()
+import seaborn as sns
+import numpy as np
 
 
 def plot_pie(column_name, dataframe):
@@ -16,7 +11,7 @@ def plot_pie(column_name, dataframe):
 
     data = dataframe.groupby(column_name).count().iloc[:, 0]
     data_Attrited = (
-        dataframe[dataframe["Attrition_Flag"] == "Attrited Customer"]
+        dataframe[dataframe["Attrition_Flag"] == "1"]
         .groupby(column_name)
         .count()
         .iloc[:, 0]
@@ -29,11 +24,23 @@ def plot_pie(column_name, dataframe):
     ax1.pie(data.T, autopct="%.1f%%", startangle=90, labels=labels)
     ax2.pie(data_Attrited.T, autopct="%.1f%%", startangle=90, labels=labels_Attrited)
 
-    # plt.show()
+    return fig
+
+def plot_hist(column_name, df):
+    fig, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
+    ax1.title.set_text("All")
+    ax2.title.set_text("Attrited Customer")
+
+    bins = np.histogram_bin_edges(df[column_name], bins=20)
+
+    sns.histplot(data=df, x=df[column_name], ax=ax1, bins=bins)
+    df_Attrited = df[df["Attrition_Flag"] == "1"]
+    sns.histplot(data=df_Attrited , x=df_Attrited[column_name], ax=ax2, bins=bins)
+
     return fig
 
 
-df = df = pd.read_csv("assets/BankChurners.csv")
+df = df = pd.read_csv("../assets/BankChurners.csv")
 
 df = df.drop(
     "Naive_Bayes_Classifier_Attrition_Flag_Card_Category"
@@ -47,6 +54,48 @@ df = df.drop(
 )
 df = df.drop("CLIENTNUM", axis=1)
 
+
+df["Attrition_Flag"].replace("Existing Customer", "0", inplace=True)
+df["Attrition_Flag"].replace("Attrited Customer", "1", inplace=True)
+
+df.rename(columns={"Total_Trans_Ct" : "Total transaction count",
+                   "Total_Trans_Amt" : "Total transaction amount",
+                   "Total_Amt_Chng_Q4_Q1" : "Change in Transaction Count",
+                   "Total_Revolving_Bal" : "Total Revolving Balance",
+                   "Avg_Utilization_Ratio" : "Average Utilization Ratio",
+                   "Total_Relationship_Count" : "Total Relationship Count",
+                   }, inplace=True)
+
 st.title("Food Demand Forecasting — Analytics Vidhya")
 st.pyplot(plot_pie("Gender", df))
 st.pyplot(plot_pie("Card_Category", df))
+
+fig, ax = plt.subplots(figsize=(10, 5))
+matrix = np.triu(df.corr(method="spearman"))
+sns.diverging_palette(220, 20, as_cmap=True)
+sns.heatmap(df.corr(), ax=ax, annot=True, mask=matrix, cmap='BrBG')
+st.write(fig)
+
+fig = plot_hist("Total transaction amount", df)
+st.write(fig)
+
+fig = plot_hist("Total transaction count", df)
+st.write(fig)
+
+fig = plot_hist("Change in Transaction Count", df)
+st.write(fig)
+
+fig = plot_hist("Total Revolving Balance", df)
+st.write(fig)
+
+fig = plot_hist("Average Utilization Ratio", df)
+st.write(fig)
+
+fig = plot_hist("Total Relationship Count", df)
+st.write(fig)
+
+fig = plot_hist("Months_Inactive_12_mon", df)
+st.write(fig)
+
+fig = plot_hist("Customer_Age", df)
+st.write(fig)
