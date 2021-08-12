@@ -3,6 +3,7 @@ import pandas as pd
 import streamlit as st
 import seaborn as sns
 import numpy as np
+from pathlib import Path
 
 
 def plot_pie(column_name, dataframe):
@@ -26,6 +27,7 @@ def plot_pie(column_name, dataframe):
 
     return fig
 
+
 def plot_hist(column_name, df):
     fig, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
     ax1.title.set_text("All")
@@ -40,7 +42,10 @@ def plot_hist(column_name, df):
     return fig
 
 
-df = df = pd.read_csv("../assets/BankChurners.csv")
+bank_churner = Path(__file__).parents[1] / 'assets/BankChurners.csv'
+
+# df = df = pd.read_csv("../assets/BankChurners.csv")
+df = df = pd.read_csv(bank_churner)
 
 df = df.drop(
     "Naive_Bayes_Classifier_Attrition_Flag_Card_Category"
@@ -66,9 +71,9 @@ df.rename(columns={"Total_Trans_Ct" : "Total transaction count",
                    "Total_Relationship_Count" : "Total Relationship Count",
                    }, inplace=True)
 
-st.title("Food Demand Forecasting — Analytics Vidhya")
-st.pyplot(plot_pie("Gender", df))
-st.pyplot(plot_pie("Card_Category", df))
+st.title("Churn prediction dashboard")
+# st.pyplot(plot_pie("Gender", df))
+# st.pyplot(plot_pie("Card_Category", df))
 
 fig, ax = plt.subplots(figsize=(10, 5))
 matrix = np.triu(df.corr(method="spearman"))
@@ -92,10 +97,4 @@ fig = plot_hist("Average Utilization Ratio", df)
 st.write(fig)
 
 fig = plot_hist("Total Relationship Count", df)
-st.write(fig)
-
-fig = plot_hist("Months_Inactive_12_mon", df)
-st.write(fig)
-
-fig = plot_hist("Customer_Age", df)
 st.write(fig)
