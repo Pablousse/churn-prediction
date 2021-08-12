@@ -34,12 +34,14 @@ models = [
 ]
 
 
-class Data:
-    pass
+def get_models_metrics(data : object, over_sapmling_type: str = "") -> None:
+    """Print a Series of model metrics for all specified model
 
-
-def get_models_metrics(data, over_sapmling_type=""):
-
+    Args:
+        data (object): Custom data object composed of the X,y train and test data
+        over_sapmling_type (str, optional): A string to print before the metrics to say if 
+        and oversampling have been used or not
+    """
     if over_sapmling_type != "":
         print(over_sapmling_type)
 
@@ -51,8 +53,12 @@ def get_models_metrics(data, over_sapmling_type=""):
         print("------------------------------------")
 
 
-def plot_feature_importance_random_forest(data):
+def plot_feature_importance_random_forest(data: object) -> None:
+    """Create a plot of the most important feature
 
+    Args:
+        data (object): Custom data object composed of the X,y train and test data
+    """
     forest = RandomForestClassifier(random_state=0)
     forest.fit(data.X_train, data.y_train)
 
@@ -68,7 +74,12 @@ def r2(rf, X_train, y_train):
     return r2_score(y_train, rf.predict(X_train))
 
 
-def plot_permutation_importances(data, model):
+def plot_permutation_importances(data: object, model) -> None:
+    """Create a plot of the most important feature for a specific model
+
+    Args:
+        data (object): Custom data object composed of the X,y train and test data
+    """
 
     importances = permutation_importances(model, data.X_train, data.y_train, r2)
     importances.sort_values(by="Importance").plot(kind="barh")
@@ -76,8 +87,9 @@ def plot_permutation_importances(data, model):
     plt.show()
 
 
-def run_model(model, data):
-
+def run_model(model: object, data: object) -> None:
+    """Print a Series of model metrics for a specified model
+    """
     model.fit(data.X_train, data.y_train)
     y_pred = model.predict(data.X_test)
 

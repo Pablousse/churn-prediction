@@ -4,7 +4,12 @@ import types
 from imblearn.over_sampling import ADASYN, SMOTE
 
 
-def initialize_dataframe():
+def initialize_dataframe() -> object:
+    """Initialize the dataframe to train and test the model
+
+    Returns:
+        a data object composed of X,y train and test data
+    """
 
     df = pd.read_csv("../assets/BankChurners.csv")
 
@@ -17,6 +22,12 @@ def initialize_dataframe():
 
 
 def train_pipeline(X, y):
+    """Pipeline function to format the dataframe for the model
+
+    Args:
+        X : the features
+        y : the target
+    """
     drop_columns(X)
     one_hot_encode_feature(X)
     X = label_encode(X)
@@ -25,7 +36,16 @@ def train_pipeline(X, y):
     return X, y
 
 
-def split_data(df, feature_name):
+def split_data(df: pd.DataFrame, feature_name: str) -> object:
+    """Split the data into train and test set for the model to train
+
+    Args:
+        df :(pd.DataFrame) dataframe
+        feature_name (str): the name of the feature column in the dataframe
+
+    Returns:
+        a data object composed of X,y train and test data
+    """
     X = df.drop(feature_name, axis=1)
     y = df[feature_name]
 
@@ -38,7 +58,13 @@ def split_data(df, feature_name):
     return data
 
 
-def drop_columns(df):
+def drop_columns(df: pd.DataFrame) -> None:
+    """Drop the column that are useless for the model
+
+    Args:
+        df (pd.DataFrame): The dataframe
+    """
+
     df.drop(
         "Naive_Bayes_Classifier_Attrition_Flag_Card_Category"
         "_Contacts_Count_12_mon_Dependent_count_Education_Level_Months_Inactive_12_mon_1",
@@ -59,7 +85,12 @@ def drop_columns(df):
     df.drop("CLIENTNUM", axis=1, inplace=True)
 
 
-def one_hot_encode_feature(df):
+def one_hot_encode_feature(df: pd.DataFrame) -> None:
+    """Custom one hot encoder
+
+    Args:
+        df (pd.DataFrame): dataframe
+    """
     df["Gender"].replace("F", "0", inplace=True)
     df["Gender"].replace("M", "1", inplace=True)
 
@@ -68,7 +99,12 @@ def one_hot_encode_feature(df):
     df["is_male"] = df["is_male"].astype(int)
 
 
-def one_hot_encode_target(y):
+def one_hot_encode_target(y: pd.Series) -> None:
+    """One hot encoder for the feature
+
+    Args:
+        y (pd.Series): the feature
+    """
     y.replace("Existing Customer", "0", inplace=True)
     y.replace("Attrited Customer", "1", inplace=True)
 
@@ -77,7 +113,15 @@ def one_hot_encode_target(y):
     y = y.astype(int)
 
 
-def label_encode(df):
+def label_encode(df: pd.DataFrame) -> pd.DataFrame:
+    """Custom label encoder
+
+    Args:
+        df (pd.DataFrame): dataframe
+
+    Returns:
+        df (pd.DataFrame): dataframe
+    """
     cleanup_nums = {
         "Education_Level": {
             "Unknown": 0,
@@ -106,7 +150,16 @@ def label_encode(df):
     return df
 
 
-def apply_over_sampling(data, over_sampling_type):
+def apply_over_sampling(data: object, over_sampling_type: str) -> object:
+    """A function to apply over sampling in case of an imbalanced dataset
+
+    Args:
+        data (object): custom data object composed of X,y train and test data
+        over_sampling_type (str): can be SMOTE or ADASYN, define the type of over sampling
+
+    Returns:
+        object: custom data object
+    """
     if over_sampling_type == "SMOTE":
         over_sampling = SMOTE(random_state=42)
     elif over_sampling_type == "ADASYN":

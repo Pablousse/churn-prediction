@@ -4,6 +4,8 @@ import joblib
 
 
 def create_model():
+    """Create the churn model
+    """
     data = initialize_dataframe()
 
     data_smote = apply_over_sampling(data, "SMOTE")
@@ -23,4 +25,10 @@ def create_model():
 
 
 def serialize_model(model):
+    """Serialize the model into a .pkl file to be able to re-use
+    it later
+
+    Args:
+        model : the model to serialize
+    """
     joblib.dump(model, "model.pkl")

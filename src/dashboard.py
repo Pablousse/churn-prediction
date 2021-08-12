@@ -1,3 +1,4 @@
+from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import pandas as pd
 import streamlit as st
@@ -6,13 +7,23 @@ import numpy as np
 from pathlib import Path
 
 
-def plot_pie(column_name, dataframe):
+def plot_pie(column_name: str, df: pd.DataFrame) -> Figure:
+    """Create a pie plot of a specific feature for the dashboard
+
+    Args:
+        column_name (str): the feature to plot
+        df (pd.DataFrame): The dataset
+
+    Returns:
+        Figure: the plot
+    """
+
     fig, (ax1, ax2) = plt.subplots(1, 2)
     fig.suptitle(column_name)
 
-    data = dataframe.groupby(column_name).count().iloc[:, 0]
+    data = df.groupby(column_name).count().iloc[:, 0]
     data_Attrited = (
-        dataframe[dataframe["Attrition_Flag"] == "1"]
+        df[df["Attrition_Flag"] == "1"]
         .groupby(column_name)
         .count()
         .iloc[:, 0]
@@ -28,7 +39,16 @@ def plot_pie(column_name, dataframe):
     return fig
 
 
-def plot_hist(column_name, df):
+def plot_hist(column_name: str, df: pd.DataFrame) -> Figure:
+    """Create a histogram plot of a specific feature for the dashboard
+
+    Args:
+        column_name (str): the feature to plot
+        df (pd.DataFrame): The dataset
+
+    Returns:
+        Figure: the plot
+    """
     fig, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
     ax1.title.set_text("All")
     ax2.title.set_text("Attrited Customer")
